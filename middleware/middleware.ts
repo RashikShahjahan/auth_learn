@@ -10,9 +10,9 @@ export const authenticator:RequestHandler = function(req,res,next){
         return;
       }
     const id = verify(token, SECRET_KEY);
-    req.user = {
-        id:id,
-    };
+
+    req.body.user["id"] = id;
+    console.log(req.body.user[id]);
 
     next();
 };
