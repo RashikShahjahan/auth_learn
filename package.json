@@ -1,0 +1,17 @@
+{
+  "name": "auth_learn",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
