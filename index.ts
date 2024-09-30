@@ -4,23 +4,16 @@ import { sign } from "jsonwebtoken";
 
 const express = require('express');
 const app = express();
-const router = express.Router()
 const SECRET_KEY = process.env.SECRET_KEY || 'SECRET_KEY';
+const fs = require('fs');
+const cors = require('cors');
+const usersObj = JSON.parse(fs.readFileSync('./users.json'));
 
-router.use(authenticator);
-app.use(router);
+app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const users = {
-    "1": {
-      name: "John",
-      password: "123456",
-    },
-    "2": {
-      name: "Jane",
-      password: "123456",
-    },
-  };
+
   
 const generateToken = async (id:string) => {
     const token = sign(id,SECRET_KEY);
@@ -30,7 +23,8 @@ const generateToken = async (id:string) => {
 
 app.post('/login',async(req:Request,res:Response)=>{
     const {name,password} = req.body;
-    const userObj = Object.entries(users).find(([,user]) => user.name === name);
+    console.log(name,password);
+    const userObj = Object.entries(usersObj).find(([,user]) => user.name === name);
     const id = userObj? userObj[0]:undefined;
     const user = userObj? userObj[1]:undefined;
 
@@ -48,9 +42,16 @@ app.post('/login',async(req:Request,res:Response)=>{
     }
 });
 
+app.post('/changeName', authenticator, (req:Request,res:Response)=>{
+    const id = req.body.user["id"];
+    console.log(id);
+    console.log(usersObj);
 
-router.get('/',async(req:Request,res:Response)=>{
-    res.send(req.user);
+    usersObj[id].name = req.body.user.name;   
+    fs.writeFileSync('./users.json',JSON.stringify(usersObj, null, 2));
+    res.status(200).json({"message":"Changed name to"+usersObj[id].name});
 });
+
+
 
 app.listen(3000);
